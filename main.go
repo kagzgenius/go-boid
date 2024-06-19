@@ -6,7 +6,7 @@ import (
 	"log"
 	"math"
 	"math/rand"
-
+	"github.com/ebitenui/ebitenui"
 	"github.com/hajimehoshi/ebiten/v2"
 )
 
@@ -31,11 +31,10 @@ type Game struct {
 }
 
 func init() {
-
+ 
 	canvasImage = ebiten.NewImage(screenWidth, screenHeight)
-
 	canvasImage.Fill(color.Black)
-
+	
 	boidImage = ebiten.NewImage(boidWidth, boidHeight)
 	//
 	// var R uint8 = uint8(rand.Intn(255))
@@ -53,10 +52,10 @@ func init() {
 	for j := 0; j < len(boids)-1; j++ {
 
 		boids[j].pos.x = rand.Intn(
-			canvasImage.Bounds().Dx() + 1000,
+			canvasImage.Bounds().Dx() + 100,
 		) // intailizea boid at random x-coordinate
 		boids[j].pos.y = rand.Intn(
-			canvasImage.Bounds().Dy() + 1000,
+			canvasImage.Bounds().Dy() + 100,
 		) // intailizea boid at random y-coordinate
 
 	}
@@ -132,7 +131,7 @@ func boundPosition(b boid) pos {
 }
 
 func limitVelocity(b boid) {
-	var vlim int = 20
+	var vlim int = 5
 	/* var vector pos */
 
 	var dist = int(math.Sqrt(math.Pow(float64(b.pos.x), 2) + math.Pow(float64(b.pos.y), 2)))
@@ -205,8 +204,9 @@ func getFlockCentering(b boid) pos { //Flock centering procedure
 	vector.x = vector.x / (len(boids) - 1)
 	vector.y = vector.y / (len(boids) - 1)
 
-	vector.x = (vector.x - b.pos.x) / 100
-	vector.y = (vector.y - b.pos.y) / 100
+	// TODO set a constant to change this 
+	vector.x = (vector.x - b.pos.x) / 250 // Slider vairable 
+	vector.y = (vector.y - b.pos.y) / 250 // Slider variable
 
 	return vector
 
