@@ -2,12 +2,21 @@ package main
 
 import (
 	//"fmt"
+	"bytes"
+	"github.com/ebitenui/ebitenui"
+	"github.com/ebitenui/ebitenui/widget"
+	"github.com/hajimehoshi/ebiten/v2"
+	"golang.org/x/image/font/gofont/goregular"
+	"github.com/hajimehoshi/ebiten/v2/text/v2"
 	"image/color"
 	"log"
 	"math"
 	"math/rand"
+<<<<<<< HEAD
 	"github.com/ebitenui/ebitenui"
 	"github.com/hajimehoshi/ebiten/v2"
+=======
+>>>>>>> ea3f9ef (We added UI and Widgets (Hello world example))
 )
 
 var (
@@ -27,6 +36,7 @@ var (
 )
 
 type Game struct {
+	ui          *ebitenui.UI
 	canvasImage *ebiten.Image
 }
 
@@ -204,8 +214,13 @@ func getFlockCentering(b boid) pos { //Flock centering procedure
 	vector.x = vector.x / (len(boids) - 1)
 	vector.y = vector.y / (len(boids) - 1)
 
+<<<<<<< HEAD
 	// TODO set a constant to change this 
 	vector.x = (vector.x - b.pos.x) / 250 // Slider vairable 
+=======
+	// TODO set a constant to change this
+	vector.x = (vector.x - b.pos.x) / 250 // Slider vairable
+>>>>>>> ea3f9ef (We added UI and Widgets (Hello world example))
 	vector.y = (vector.y - b.pos.y) / 250 // Slider variable
 
 	return vector
@@ -219,6 +234,7 @@ func (g *Game) Update() error {
 	var B uint8 = uint8(255)
 	var A uint8 = 1
 	boidImage.Fill(color.RGBA{R, G, B, A})
+	g.ui.Update()
 	return nil
 
 }
@@ -229,6 +245,7 @@ func (g *Game) Draw(screen *ebiten.Image) {
 	g.boidMove()
 
 	//screen.DrawImage(boidImage, nil)
+	g.ui.Draw(screen)
 
 }
 
@@ -238,13 +255,39 @@ func (g *Game) Layout(outsideWidth, outsideHeight int) (int, int) {
 }
 
 func main() {
-	game := &Game{}
 
 	/* 	ebiten.SetTPS(30) */
 	ebiten.SetWindowSize(screenWidth, screenHeight)
 	ebiten.SetWindowTitle("Boids - A bird simulation")
+	ebiten.SetWindowResizingMode(ebiten.WindowResizingModeEnabled)
+	rootContainer := widget.NewContainer()
 
-	if err := ebiten.RunGame(game); err != nil {
+	eui := &ebitenui.UI{
+		Container: rootContainer,
+	}
+	s, err := text.NewGoTextFaceSource(bytes.NewReader(goregular.TTF))
+	if err != nil {
+		log.Fatal(err)
+	}
+
+	var fontFace text.Face = &text.GoTextFace{
+		Source: s,
+		Size:   32,
+	}
+
+	// This creates a text widget that says "Hello World!"
+	helloWorldLabel := widget.NewText(
+		widget.TextOpts.Text("Hello World!", &fontFace, color.White),
+	)
+
+	// To display the text widget, we have to add it to the root container.
+	rootContainer.AddChild(helloWorldLabel)
+
+	game := Game{
+		ui: eui,
+	}
+
+	if err := ebiten.RunGame(&game); err != nil {
 		log.Fatal(err)
 	}
 }
